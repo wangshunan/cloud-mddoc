@@ -2,41 +2,29 @@ import React, { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types'
+import useKeyPress from '../hooks/UseKeyPress'
 
 const FileSearch = ({ title, onFileSearch }) => {
     const [ inputActive, setInputActive ] = useState(false) // 入力状態
     const [ value, setValue ] = useState('')                // 入力値
+    const enterKeyPress = useKeyPress(13)                      // Enter
+    const escKeyPress = useKeyPress(27)                         // Esc
     let node = useRef(null)
 
     // 検索欄を閉じる
-    const closeSearch = (e) => {
-        e.preventDefault()
+    const closeSearch = () => {
         setInputActive(false)
         setValue('')
     }
 
     // キーボード入力
     useEffect(() => {
-        const handleInputEvent = (event) => {
-            const { keyCode } = event
-            if ( inputActive ) {
-                switch(keyCode) {
-                    case 13: 
-                        onFileSearch(value)
-                        break
-                    case 27: 
-                        closeSearch(event)
-                        break
-                    default:
-                        break
-                }
-            }
+        if ( enterKeyPress && inputActive ) {
+            onFileSearch(value)
         }
 
-        document.addEventListener('keyup', handleInputEvent)
-
-        return () => {
-            document.removeEventListener('keyup', handleInputEvent)
+        if ( escKeyPress && inputActive ) {
+            closeSearch()
         }
     })
 
@@ -47,7 +35,7 @@ const FileSearch = ({ title, onFileSearch }) => {
     }, [inputActive])
 
     return(
-        <div className="alert alert-primary d-flex justify-content-center justify-content-between">
+        <div className="alert alert-primary d-flex justify-content-center justify-content-between mb-0">
             { !inputActive &&
                 <>
                     <span>{title}</span>

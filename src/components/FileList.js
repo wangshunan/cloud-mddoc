@@ -3,13 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faTrash, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faMarkdown } from '@fortawesome/free-brands-svg-icons'
 import propTypes from 'prop-types'
+import useKeyPress from '../hooks/UseKeyPress'
 
 const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
     const [editStatus, setEditStatus] = useState(false)
     const [value, setValue] = useState('')
 
-    const closeSetEdit = (e) => {
-        e.preventDefault()
+    const enterKeyPress = useKeyPress(13)
+    const escKeyPress = useKeyPress(27)
+
+    const closeSetEdit = () => {
         setEditStatus(false)
         setValue('')
     }
@@ -19,30 +22,17 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
         setValue(value);
     }
 
+
     useEffect(() => {
-        const handleInputEvent = (event) => {
-            const {keyCode} = event
-            if ( editStatus ) {
-                switch(keyCode) {
-                    case 13:
-                        const editItem = files.find(file => file.id === editStatus)
-                        onSaveEdit(editItem.id, value)
-                        setEditStatus(false)
-                        setValue('')
-                        break
-                    case 27:
-                        closeSetEdit(event)
-                        break
-                    default:
-                        break
-                }
-            }
+        if ( enterKeyPress && editStatus ) {
+            const editItem = files.find(file => file.id === editStatus)
+            onSaveEdit(editItem.id, value)
+            setEditStatus(false)
+            setValue('')
         }
 
-        document.addEventListener('keyup', handleInputEvent)
-
-        return () => {
-            document.removeEventListener('keyup', handleInputEvent)
+        if ( escKeyPress && editStatus ) {
+            closeSetEdit()
         }
     })
 
@@ -53,11 +43,11 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
                     <li className="row list-group-item bg-light d-flex align-items-center file-item"
                         key={file.id}
                     >
+                        <span className="col-2">
+                            <FontAwesomeIcon sile="lg" icon={faMarkdown}/>
+                        </span>
                         { ( file.id !== editStatus ) &&
                             <>
-                                <span className="col-2">
-                                    <FontAwesomeIcon sile="lg" icon={faMarkdown}/>
-                                </span>
                                 <span className="col-8 c-link" onClick={() => {onFileClick(file.id)}}>
                                     {file.title}
                                 </span>
@@ -72,8 +62,8 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
 
                         { ( file.id === editStatus ) &&
                             <>
-                                <input className="from-control" value={value} onChange={(e) => { setValue(e.target.value) }} />
-                                <button type="button" className="icon-button" onClick={closeSetEdit}>
+                                <input className="from-control col-9" value={value} onChange={(e) => { setValue(e.target.value) }} />
+                                <button type="button" className="icon-button col-1" onClick={closeSetEdit}>
                                     <FontAwesomeIcon title='閉じる' size="lg" icon={faTimes}/>
                                 </button>
                             </>
