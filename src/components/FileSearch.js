@@ -38,16 +38,16 @@ const FileSearch = ({ title, onFileSearch }) => {
         <div className="alert alert-primary d-flex justify-content-center justify-content-between mb-0">
             { !inputActive &&
                 <>
-                    <span>{title}</span>
-                    <button type="button" className="icon-button" onClick={() => { setInputActive(true) }}>
+                    <span className="col-8">{title}</span>
+                    <button type="button" className="icon-button col-4" style={{height: '26px'}} onClick={() => { setInputActive(true) }}>
                         <FontAwesomeIcon title='検索' size="lg" icon={faSearch}/>
                     </button>
                 </>
             }
             { inputActive &&
                 <>
-                    <input className="from-control" value={value} ref={node} onChange={(e) => { setValue(e.target.value) }} />
-                    <button type="button" className="icon-button" onClick={closeSearch}>
+                    <input className="from-control col-8 px-2" style={{height: '26px'}} value={value} ref={node} onChange={(e) => { setValue(e.target.value) }} />
+                    <button type="button" className="icon-button col-4" onClick={closeSearch}>
                         <FontAwesomeIcon title='閉じる' size="lg" icon={faTimes}/>
                     </button>
                 </>

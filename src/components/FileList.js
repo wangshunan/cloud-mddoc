@@ -40,7 +40,7 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
         <ul className="list-group list-group-flush file-list">
             {
                 files.map(file => (
-                    <li className="row list-group-item bg-light d-flex align-items-center file-item"
+                    <li className="row list-group-item bg-light d-flex align-items-center file-item px-0 mx-0"
                         key={file.id}
                     >
                         <span className="col-2">
@@ -48,13 +48,13 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
                         </span>
                         { ( file.id !== editStatus ) &&
                             <>
-                                <span className="col-8 c-link" onClick={() => {onFileClick(file.id)}}>
+                                <span className="col-6 c-link mx-0" onClick={() => {onFileClick(file.id)}}>
                                     {file.title}
                                 </span>
-                                <button type="button" className="col-1 icon-button" onClick={() => {openSetEdit(file.id, file.title)}}> 
+                                <button type="button" className="col-2 icon-button" onClick={() => {openSetEdit(file.id, file.title)}}> 
                                     <FontAwesomeIcon title='編集' sile="lg" icon={faEdit}/>  
                                 </button>
-                                <button type="button" className="col-1 icon-button" onClick={() => {onFileDelete(file.id)}}> 
+                                <button type="button" className="col-2 icon-button" onClick={() => {onFileDelete(file.id)}}> 
                                     <FontAwesomeIcon title="削除" sile="lg" icon={faTrash}/> 
                                 </button>
                             </>
@@ -62,8 +62,8 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
 
                         { ( file.id === editStatus ) &&
                             <>
-                                <input className="from-control col-9" value={value} onChange={(e) => { setValue(e.target.value) }} />
-                                <button type="button" className="icon-button col-1" onClick={closeSetEdit}>
+                                <input className="from-control col-8" value={value} onChange={(e) => { setValue(e.target.value) }} />
+                                <button type="button" className="icon-button col-2" onClick={closeSetEdit}>
                                     <FontAwesomeIcon title='閉じる' size="lg" icon={faTimes}/>
                                 </button>
                             </>
