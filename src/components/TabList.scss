@@ -1,12 +1,12 @@
 .close-icon {
     visibility: hidden;
-    color: white;
+    color: black;
     height: 12px;
     width: 12px;
 }
 
 .tab-list {
-    background-color: wheat;
+
 }
 
 .nav-link:hover .close-icon {
@@ -19,7 +19,7 @@
 
 .unsaved-icon {
     display: inline-block;
-    color: white;
+    color: pink;
 }
 
 .withUnsaved.nav-link .close-icon {

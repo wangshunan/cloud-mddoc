@@ -20,8 +20,8 @@ const TabList = ({files, activeId, unsaveIds, onTabClick, onCloseTab}) => {
                     <li className="row tab-list nav-item mx-0 d-flex justify-content-center justify-content-between" key={file.id}>
                         <a href="#" className={fClassName} onClick={(e)=> {e.preventDefault(); onTabClick(file.id)}}>
                             {file.title}
-                            <span className=" ml-2 close-icon " onClick={(e) => {e.stopPropagation(); onCloseTab(withUnsavedMark)}}>
-                                <FontAwesomeIcon title='閉じる' size="md" icon={faTimes}/>
+                            <span className=" ml-2 close-icon " onClick={(e) => {e.stopPropagation(); onCloseTab(file.id)}}>
+                                <FontAwesomeIcon title='閉じる' size="1x" icon={faTimes}/>
                             </span>
                             { withUnsavedMark && 
                             <span className="ml-2 unsaved-icon">
