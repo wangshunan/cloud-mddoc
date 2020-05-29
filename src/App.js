@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons'
+import { v4 as uuidv4 } from 'uuid'
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import './App.css';
@@ -13,8 +14,9 @@ import TabList from './components/TabList'
 
 function App() {
 	const [ files, setFiles ] = useState(defaultFiles)
+	const [ searchedFiles, setSearchFiles ] = useState([])
 	const [ activeFileID, setActiveFileID ] = useState('')
-	const [ openedFileIDs, setopenedFileIDs ] = useState([])
+	const [ openedFileIDs, setOpenedFileIDs ] = useState([])
 	const [ unsavedFileIDs, setUnsaveFileIDs ] = useState([])
 
 	const openedFiles = openedFileIDs.map(openID => {
@@ -22,6 +24,22 @@ function App() {
 	})
 
 	const activeFile = files.find( file => file.id === activeFileID)
+	const fileListArr = (searchedFiles.length > 0) ? searchedFiles : files
+
+	const createNewFile = () => {
+		const newFile = files.find(file => file.isNew === true)
+		if ( !newFile ) {
+			const newID = uuidv4()
+			const newFiles = [...files, {
+				id: newID,
+				title: '',
+				body: '## 请输出新内容',
+				createdAt: new Date().getTime(),
+				isNew: true
+			}]
+			setFiles(newFiles)
+		}
+	}
 
 	const fileClick = (fileID) => {
 		// set active file
@@ -29,7 +47,7 @@ function App() {
 
 		// add new file id to openedFiles
 		if ( !openedFileIDs.includes(fileID) ) {
-			setopenedFileIDs([ ...openedFileIDs, ...fileID])
+			setOpenedFileIDs([ ...openedFileIDs, fileID])
 		}
 	}
 
@@ -41,7 +59,7 @@ function App() {
 	const tabClose = (id) => {
 		// remove fileID from openedFileIDs
 		const tabsWithout = openedFileIDs.filter(fileID => fileID !== id)
-		setopenedFileIDs(tabsWithout)
+		setOpenedFileIDs(tabsWithout)
 
 		// set new active fileID
 		setActiveFileID(tabsWithout.length > 0 ? tabsWithout[0] : [] )
@@ -56,18 +74,41 @@ function App() {
 		}
 	}
 
+	const deleteFile = (id) => {
+		// delete selected file
+		const newFiles = files.filter(file => file.id !== id)
+		setFiles(newFiles)
+		
+		// close the tab if opened
+		tabClose(id)
+	}
+
+	const changeFileName = (id, title) => {
+		// 
+		var newFile = files.find(file => file.id === id)
+		newFile.title = title
+		newFile.isNew = false
+		
+	}
+
+	const fileSearch = (keyword) => {
+		// filter out the new files
+		const newFiles = files.filter(file => file.title.includes(keyword))
+		setSearchFiles(newFiles)
+	}
+
 	return (
 		<div className="App container-fluid px-0">
 		<div className="row no-gutters">
 			<div className="col-3 bg-light left-panel">
 				<FileSearch 
-					onFileSearch={(value) => { console.log(value)} }
+					onFileSearch={fileSearch}
 				/>
 				<FileList 
-					files={files}
+					files={fileListArr}
 					onFileClick={fileClick}
-					onSaveEdit={(id,value) => {console.log(id,value)}}
-					onFileDelete={(id) => {console.log("deleting", id)}}
+					onSaveEdit={changeFileName}
+					onFileDelete={deleteFile}
 				/>
 				<div className="row no-gutters button-group">
 					<div className="col">
@@ -75,6 +116,7 @@ function App() {
 							text="追加"
 							colorClass="btn-info"
 							btnIcon={faPlus}
+							onBtnClick={createNewFile}
 						/>
 					</div>
 					<div className="col">

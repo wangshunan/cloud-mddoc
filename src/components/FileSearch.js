@@ -15,6 +15,7 @@ const FileSearch = ({ title, onFileSearch }) => {
     const closeSearch = () => {
         setInputActive(false)
         setValue('')
+        onFileSearch('')
     }
 
     // キーボード入力
@@ -26,7 +27,7 @@ const FileSearch = ({ title, onFileSearch }) => {
         if ( escKeyPress && inputActive ) {
             closeSearch()
         }
-    })
+    },[enterKeyPress, escKeyPress])
 
     useEffect(() => {
         if ( inputActive ) {

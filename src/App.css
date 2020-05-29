@@ -26,3 +26,12 @@
   width: 100%;
   bottom: 0;
 }
+
+.from-control {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+::-webkit-input-placeholder{
+  font-size: 10px;
+}

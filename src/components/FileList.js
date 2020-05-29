@@ -8,11 +8,19 @@ import useKeyPress from '../hooks/UseKeyPress'
 const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
     const [editStatus, setEditStatus] = useState(false)
     const [value, setValue] = useState('')
+    const [newFileCreating, setNewFileCreating] = useState(false)
 
+    let node = useRef(null)
     const enterKeyPress = useKeyPress(13)
     const escKeyPress = useKeyPress(27)
 
     const closeSetEdit = () => {
+        if ( newFileCreating ) {
+            const newFile = files.find(file => file.isNew === true)
+            onFileDelete(newFile.id)
+            setNewFileCreating(false)
+        }
+
         setEditStatus(false)
         setValue('')
     }
@@ -22,19 +30,43 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
         setValue(value);
     }
 
+    const changeFileName = (file) => {
+        if ( value.length > 0 ) {
+            onSaveEdit(file.id, value)
+        } else if (file.isNew ){
+            onFileDelete(file.id)
+        }
+        setNewFileCreating(false)
+        setEditStatus(false)
+        setValue('')
+    }
+
+    useEffect(() => {
+        if ( editStatus ) {
+            node.current.focus()
+        }
+    }, [editStatus])
+
+    useEffect(() => {
+        const newFile = files.find(file => file.isNew === true)
+        if ( newFile ) {
+            setEditStatus(newFile.id)
+            setNewFileCreating(true)
+            openSetEdit(newFile.id, newFile.title)
+        }
+        
+    },[files])
 
     useEffect(() => {
         if ( enterKeyPress && editStatus ) {
             const editItem = files.find(file => file.id === editStatus)
-            onSaveEdit(editItem.id, value)
-            setEditStatus(false)
-            setValue('')
+            changeFileName(editItem)
         }
 
         if ( escKeyPress && editStatus ) {
             closeSetEdit()
         }
-    })
+    }, [enterKeyPress, escKeyPress])
 
     return (
         <ul className="list-group list-group-flush file-list">
@@ -62,7 +94,7 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
 
                         { ( file.id === editStatus ) &&
                             <>
-                                <input className="from-control col-8" value={value} onChange={(e) => { setValue(e.target.value) }} />
+                                <input className="from-control col-8 " value={value} ref={node} placeholder="ファイル名を入力してください" onChange={(e) => { setValue(e.target.value) }} />
                                 <button type="button" className="icon-button col-2" onClick={closeSetEdit}>
                                     <FontAwesomeIcon title='閉じる' size="lg" icon={faTimes}/>
                                 </button>

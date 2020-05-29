@@ -5,19 +5,19 @@ const UseKeyPress = (targetKeyCode) => {
     
     const keyUpHandle = ({keyCode}) => {
         if ( keyCode === targetKeyCode ) {
-        setKeyPreesed(false)
+            setKeyPreesed(false)
         }
     } 
 
     const keyDownhandle = ({keyCode}) => {
         if ( keyCode === targetKeyCode ) {
-        setKeyPreesed(true)
+            setKeyPreesed(true)
         }
     }
 
     useEffect(() => {
-        document.addEventListener('keyUp', keyUpHandle)
-        document.addEventListener('keyDown', keyDownhandle)
+        document.addEventListener('keyup', keyUpHandle)
+        document.addEventListener('keydown', keyDownhandle)
 
         return () => {
         document.removeEventListener('keyup', keyUpHandle)
