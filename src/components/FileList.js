@@ -30,10 +30,10 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
         setValue(value);
     }
 
-    const changeFileName = (file) => {
+    const updateFileName = (file) => {
         if ( value.length > 0 ) {
-            onSaveEdit(file.id, value)
-        } else if (file.isNew ){
+            onSaveEdit(file.id, value, file.isNew)
+        } else if ( file.isNew ){
             onFileDelete(file.id)
         }
         setNewFileCreating(false)
@@ -60,7 +60,7 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
     useEffect(() => {
         if ( enterKeyPress && editStatus ) {
             const editItem = files.find(file => file.id === editStatus)
-            changeFileName(editItem)
+            updateFileName(editItem)
         }
 
         if ( escKeyPress && editStatus ) {
