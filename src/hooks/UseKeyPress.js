@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const UseKeyPress = (targetKeyCode) => {
+const useKeyPress = (targetKeyCode) => {
     const [keyPressed, setKeyPreesed] = useState(false)
     
     const keyUpHandle = ({keyCode}) => {
@@ -28,4 +28,4 @@ const UseKeyPress = (targetKeyCode) => {
     return keyPressed
 }
 
-export default UseKeyPress
+export default useKeyPress

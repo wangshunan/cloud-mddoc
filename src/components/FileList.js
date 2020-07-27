@@ -3,7 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faTrash, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faMarkdown } from '@fortawesome/free-brands-svg-icons'
 import propTypes from 'prop-types'
-import useKeyPress from '../hooks/UseKeyPress'
+import useKeyPress from '../hooks/useKeyPress'
+import useContextMenu from '../hooks/useContextMenu'
+import { getParentNode } from '../utils/helper'
 
 const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
     const [editStatus, setEditStatus] = useState(false)
@@ -13,6 +15,29 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
     let node = useRef(null)
     const enterKeyPress = useKeyPress(13)
     const escKeyPress = useKeyPress(27)
+    const clickedItem = useContextMenu([
+        {
+            label: '開く',
+            click: () => {
+                const parentElement = getParentNode(clickedItem.current, 'file-item', files)
+                if ( parentElement ) {
+                    onFileClick(parentElement.dataset.id)
+                }
+            }
+        },
+        {
+            label: 'タイトル変更',
+            click: () => {
+
+            }
+        },        {
+            label: '削除',
+            click: () => {
+
+            }
+        },
+    ], '.file-list', [files])
+
 
     const closeSetEdit = () => {
         if ( newFileCreating ) {
@@ -41,12 +66,14 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
         setValue('')
     }
 
+    //
     useEffect(() => {
         if ( editStatus ) {
             node.current.focus()
         }
     }, [editStatus])
 
+    //
     useEffect(() => {
         const newFile = files.find(file => file.isNew === true)
         if ( newFile ) {
@@ -57,6 +84,7 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
         
     },[files])
 
+    //
     useEffect(() => {
         if ( enterKeyPress && editStatus ) {
             const editItem = files.find(file => file.id === editStatus)
@@ -74,6 +102,8 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
                 files.map(file => (
                     <li className="row list-group-item bg-light d-flex align-items-center file-item px-0 mx-0"
                         key={file.id}
+                        data-id={file.id}
+                        data-title={file.title}
                     >
                         <span className="col-2">
                             <FontAwesomeIcon sile="lg" icon={faMarkdown}/>

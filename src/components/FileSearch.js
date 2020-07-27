@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types'
-import useKeyPress from '../hooks/UseKeyPress'
+import useKeyPress from '../hooks/useKeyPress'
+import useIpcRenderer from '../hooks/useIpcRenderer'
 
 const FileSearch = ({ title, onFileSearch }) => {
     const [ inputActive, setInputActive ] = useState(false) // 入力状態
     const [ value, setValue ] = useState('')                // 入力値
-    const enterKeyPress = useKeyPress(13)                      // Enter
-    const escKeyPress = useKeyPress(27)                         // Esc
+    const enterKeyPress = useKeyPress(13)                   // Enter
+    const escKeyPress = useKeyPress(27)                     // Esc
     let node = useRef(null)
 
     // 検索欄を閉じる
@@ -18,12 +19,16 @@ const FileSearch = ({ title, onFileSearch }) => {
         onFileSearch('')
     }
 
+    useIpcRenderer({
+		'search-file': () => {setInputActive(true)}
+	})
+
     // キーボード入力
     useEffect(() => {
         if ( enterKeyPress && inputActive ) {
             onFileSearch(value)
         }
-
+        
         if ( escKeyPress && inputActive ) {
             closeSearch()
         }

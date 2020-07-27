@@ -1,0 +1,18 @@
+.loading-component {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.loading-background {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(200,200,200, 0.3) !important;
+    width: 1920px;
+    height: 1080px;
+    z-index: 10;
+}
