@@ -1,4 +1,5 @@
 const { app, Menu, ipcMain, dialog } = require('electron')
+const { autoUpdater } = require('electron-updater')
 const isDev = require('electron-is-dev')
 const menuTemplate = require('./src/menuTemplate')
 const AppWindow = require('./src/AppWindow')
@@ -7,6 +8,8 @@ const path = require('path')
 const Store = require('electron-store')
 const filesStore = new Store({name: 'Files Data'})
 const settingsStore = new Store({name: 'settings'})
+
+let mainWindow, settingsWindow
 
 const createQiniuManager = () => {
     const accessKey = settingsStore.get('accessKey')
@@ -26,18 +29,62 @@ const splitFileName = (fileName) => {
 }
 
 const setLoading = (toggle) => {
-    return mainWindow.webContents.send('loading-status', toggle)
+    mainWindow.webContents.send('loading-status', toggle)
+}
+
+const autoUpdate = () => {
+    if (isDev) {
+        autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml')
+    }
+    autoUpdater.autoDownload = false
+    autoUpdater.checkForUpdates()
+    autoUpdater.on('error', (err) => {
+        dialog.showErrorBox('err', err === null ? "unknown" : (err.stack || err).toString())
+    })
+    autoUpdater.on('update-available', () => {
+        dialog.showMessageBox({
+                type: 'info',
+                title: '新しいバージョンがあります',
+                message: '新しいバージョンを更新しますか?',
+                buttons: ['はい', 'いいえ']
+                }, (buttonIndex) => {
+                if (buttonIndex === 0) {
+                    autoUpdater.downloadUpdate()
+                }
+            })
+    })
+    autoUpdater.on('update-not-available', () => {
+        dialog.showMessageBox({
+            title: '新しいバージョンがありません',
+            message: '最新なバージョンです'
+        })
+    })
+    autoUpdater.on('download-progress', (progressObj) => {
+        let log_message = "Download speed: " + progressObj.bytesPerSecond;
+        log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+        log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+        console.log(log_message)
+    })
+    autoUpdater.on('update-downloaded', () => {
+        dialog.showMessageBox({
+            title: 'アップデート中',
+            message: 'ダウンロード完了、再起動してインストールします'
+        }, () => {
+            setImmediate(() => autoUpdater.quitAndInstall())
+        })
+    })
 }
 
 
-let mainWindow, settingsWindow
-
 app.on('ready', () => {
+
+    autoUpdate()
+
     const mainWindowConfig = {
         width: 1024,
         height: 680,
     }
-    const urlLocation = isDev ? 'http://localhost:3000/' : 'dummyurl'
+    const urlLocation = isDev ? 'http://localhost:3000/' : `file://${path.join(__dirname, './index.html')}`
     mainWindow = new AppWindow(mainWindowConfig, urlLocation)
     mainWindow.on('closed', () => {
         mainWindow = null

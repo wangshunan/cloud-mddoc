@@ -189,7 +189,7 @@ function App() {
 	const deleteFile = (id) => {
 
 		// delete could file
-		if ( getAutoSync() ) {
+		if ( getAutoSync() && files[id].syncedAt ) {
 			ipcRenderer.send('delete-file', `${files[id].title}.md`)
 		}
 
@@ -240,7 +240,7 @@ function App() {
 			const oldKey = basename(oldPath)
 			const newKey = basename(newPath)
 
-			if ( getAutoSync() ) {
+			if ( getAutoSync() && files[id].syncedAt ) {
 				ipcRenderer.send('rename-file', oldKey, newKey)
 			}
 
