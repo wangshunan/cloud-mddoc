@@ -187,24 +187,24 @@ function App() {
 	}
 
 	const deleteFile = (id) => {
-
 		// delete could file
 		if ( getAutoSync() && files[id].syncedAt ) {
 			ipcRenderer.send('delete-file', `${files[id].title}.md`)
 		}
 
+		// delete selected file form files
+		const { [id]: value, ...afterDelete } = files
+		setFiles(afterDelete)
+
 		// delete local file
 		if ( fileHelper.isFile(files[id].path) ) {
 			fileHelper.deleteFile(files[id].path)
-			
-			// delete selected file form files
-			const { [id]: value, ...afterDelete } = files
-			setFiles(afterDelete)
 
 			// close the tab if opened
 			tabClose(id)
 			updateFilesToStore(afterDelete)
 		}
+
 	}
 
 	const saveCurrentFile = () => {

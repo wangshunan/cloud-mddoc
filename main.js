@@ -44,18 +44,19 @@ const autoUpdate = () => {
     autoUpdater.on('update-available', () => {
         dialog.showMessageBox({
                 type: 'info',
-                title: '新しいバージョンがあります',
-                message: '新しいバージョンを更新しますか?',
+                title: 'バージョンチェック',
+                message: '新しいバージョンがあります',
                 buttons: ['はい', 'いいえ']
-                }, (buttonIndex) => {
-                if (buttonIndex === 0) {
+                }
+            ).then((buttonIndex) => {
+                if (buttonIndex.response === 0) {
                     autoUpdater.downloadUpdate()
                 }
             })
     })
     autoUpdater.on('update-not-available', () => {
         dialog.showMessageBox({
-            title: '新しいバージョンがありません',
+            title: 'バージョンチェック',
             message: '最新なバージョンです'
         })
     })
@@ -102,7 +103,7 @@ app.on('ready', () => {
             parent: mainWindow
         }
 
-        const settingsFileLocation = `file://${path.join(__dirname, './settings/settings.html')}`
+        const settingsFileLocation = isDev ? `file://${path.join(__dirname, './settings/settings.html')}` : `file://${path.join(__dirname, '../settings/settings.html')}`
         settingsWindow = new AppWindow(windowConfig, settingsFileLocation)
         settingsWindow.on('closed', () => {
             mainWindow = null

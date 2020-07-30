@@ -16,7 +16,7 @@ const FileSearch = ({ title, onFileSearch }) => {
     const closeSearch = () => {
         setInputActive(false)
         setValue('')
-        onFileSearch('')
+        onFileSearch(null)
     }
 
     useIpcRenderer({

@@ -1,6 +1,6 @@
 {
   "name": "cloud-mkdoc",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "main": "main.js",
   "private": true,
   "dependencies": {
@@ -29,7 +29,7 @@
   "homepage": "./",
   "build": {
     "appId": "cloudDoc",
-    "productName": "七牛云文档",
+    "productName": "QiniuCloudDoc",
     "copyright": "Copyright © 2019 ${author}",
     "files": [
       "build/**/*",

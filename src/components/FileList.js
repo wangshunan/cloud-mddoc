@@ -15,11 +15,12 @@ const FileList = ( { files, onFileClick, onSaveEdit, onFileDelete} ) => {
     let node = useRef(null)
     const enterKeyPress = useKeyPress(13)
     const escKeyPress = useKeyPress(27)
+
     const clickedItem = useContextMenu([
         {
             label: '開く',
             click: () => {
-                const parentElement = getParentNode(clickedItem.current, 'file-item', files)
+                const parentElement = getParentNode(clickedItem.current, 'file-item')
                 if ( parentElement ) {
                     onFileClick(parentElement.dataset.id)
                 }
